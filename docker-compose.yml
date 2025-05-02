@@ -1,18 +1,16 @@
-version: '3.9'
-
 services:
   postgres:
     image: postgres:latest
-    container_name: postgres_container
+    container_name: postgres_fast_api
     environment:
-      POSTGRES_USER: postgres_user
-      POSTGRES_PASSWORD: postgres_password
-      POSTGRES_DB: postgres_db
+      POSTGRES_USER: amin
+      POSTGRES_PASSWORD: my_super_password
+      POSTGRES_DB: fast_api
       PGDATA: /var/lib/postgresql/data/pgdata
     ports:
-      - "5430:5432"
+      - "5433:5432"
     volumes:
-      - ./pgdata:/var/lib/postgresql/data/pgdata
+      - pgdata:/var/lib/postgresql/data/pgdata
     deploy:
       resources:
         limits:
