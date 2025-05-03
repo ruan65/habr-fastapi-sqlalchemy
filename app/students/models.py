@@ -36,6 +36,9 @@ class Major(Base):
     major_description: Mapped[str_null_true]
     count_students: Mapped[int] = mapped_column(server_default=text('0'))
 
+    # Add this line to define the relationship
+    students: Mapped[list["Student"]] = relationship("Student", back_populates="major")
+
     def __str__(self):
         return f"{self.__class__.__name__}(id={self.id}, major_name={self.major_name!r})"
 
