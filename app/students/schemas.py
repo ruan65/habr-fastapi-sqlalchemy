@@ -3,6 +3,14 @@ from typing import Optional
 import re
 from pydantic import BaseModel, Field, EmailStr, validator
 
+class SMajor(BaseModel):
+    id: int
+    major_name: str
+    major_description: Optional[str] = None
+    count_students: int
+
+    class Config:
+        from_attributes = True
 
 class SStudent(BaseModel):
     id: int
@@ -13,10 +21,12 @@ class SStudent(BaseModel):
     email: EmailStr = Field(..., description="Электронная почта студента")
     address: str = Field(..., min_length=10, max_length=200, description="Адрес студента, не более 200 символов")
     enrollment_year: int = Field(..., ge=2002, description="Год поступления должен быть не меньше 2002")
-    major_id: int = Field(..., ge=1, description="ID специальности студента")
+    major: SMajor  # Изменено с str на SMajor
     course: int = Field(..., ge=1, le=5, description="Курс должен быть в диапазоне от 1 до 5")
     special_notes: Optional[str] = Field(None, max_length=500, description="Дополнительные заметки, не более 500 символов")
-    major: Optional[str] = Field(..., description="Название факультета")
+
+    class Config:
+        from_attributes = True
 
     @validator("phone_number")
     def validate_phone_number(cls, value):

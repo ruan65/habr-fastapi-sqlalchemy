@@ -10,7 +10,7 @@ router = APIRouter(
 )
 
 
-@router.get("/", summary="Список всех стуSнтов", response_model=list[SStudent])
+@router.get("/", summary="Список всех студентов", response_model=list[SStudent])
 async def get_all_students(request_body: RBStudent = Depends()) -> list[SStudent]:
     return await StudentDAO.find_all(**request_body.to_dict())
 
