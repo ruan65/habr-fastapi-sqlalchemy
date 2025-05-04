@@ -1,4 +1,4 @@
-from app.students.models import Student, Major
+from app.students.models import Student
 from app.dao.base import BaseDAO
 from app.database import async_session_maker
 from sqlalchemy import select
