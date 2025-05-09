@@ -3,7 +3,7 @@ from app.users.auth import get_password_hash, create_access_token, authenticate_
 from app.users.dao import UsersDAO
 from app.users.schemas import SUserRegister, SUserAuth
 from app.users.models import User
-from app.users.dependencies import get_current_user
+from app.users.dependencies import get_current_user, get_current_admin_user
 
 
 router = APIRouter(prefix="/auth", tags=["Auth"])
@@ -43,3 +43,32 @@ async def get_me(user_data: User = Depends(get_current_user)):
 async def logout_user(response: Response):
     response.delete_cookie(key="users_access_token")
     return {"message": "Пользователь успешно вышел из системы"}
+
+
+@router.get("/all_users/")
+async def get_all_users(user_data: User = Depends(get_current_admin_user)):
+    return await UsersDAO.find_all()
+
+
+@router.post("/set_admin/{user_id}")
+async def set_user_as_admin(
+    user_id: int,
+    set_admin: bool = True,
+    current_user: User = Depends(get_current_admin_user)
+) -> dict:
+    user = await UsersDAO.find_one_or_none_by_id(user_id)
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="User not found"
+        )
+    
+    await UsersDAO.update(
+        filter_by={"id": user_id},
+        is_admin=set_admin
+    )
+    
+    action = "set as admin" if set_admin else "removed from admin"
+    return {"message": f"User with ID {user_id} has been successfully {action}"}
+
+
