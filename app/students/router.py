@@ -1,7 +1,8 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Request, UploadFile
 from app.students.dao import StudentDAO
 from app.students.schemas import SStudent, SStudentAdd
 from app.students.rb import RBStudent
+import shutil
 
 
 router = APIRouter(
@@ -13,6 +14,13 @@ router = APIRouter(
 @router.get("/", summary="Список всех студентов", response_model=list[SStudent])
 async def get_all_students(request_body: RBStudent = Depends()) -> list[SStudent]:
     return await StudentDAO.find_all(**request_body.to_dict())
+
+
+@router.get("/all", summary="Список студентов", response_model=list[SStudent])
+async def get_all_students_for_front(
+    request_body: RBStudent = Depends(),
+) -> list[SStudent]:
+    return await StudentDAO.find_students(**request_body.to_dict())
 
 
 @router.get("/by_filter", summary="Получить одного студента по фильтру")
@@ -47,3 +55,9 @@ async def dell_student_by_id(student_id: int) -> dict:
         return {"message": f"Студент с ID {student_id} удален!"}
     else:
         return {"message": "Ошибка при удалении студента!"}
+
+
+@router.post("/add_photo")
+async def add_student_photo(file: UploadFile, image_name: int):
+    with open(f"app/static/images/{image_name}.webp", "wb+") as photo_obj:
+        shutil.copyfileobj(file.file, photo_obj)

@@ -1,17 +1,27 @@
-<!DOCTYPE html>
-<html lang="en">
+<!doctype html>
+<html lang="ru">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Все студенты</title>
+    <link rel="stylesheet" type="text/css" href="/static/style/styles.css">
 </head>
 <body>
-    <h1>Students list</h1>
-    <ul>
+    <h1>Список студентов</h1>
+    <div>
         {% for student in students %}
-        <li>
-            <a href="{{ url_for('student', student_id=student.id) }}">{{ student.name }}</a>
-        </li>
+        <div class="student-card">
+            <img src="/static/images/{{ student.id }}.webp" alt="Фото студента">
+            <div class="details">
+                <h2>ID: {{ student.id }}</h2>
+                <p>Полное имя: {{ student.first_name }} {{ student.last_name }}</p>
+                <p>Email: {{ student.email }}</p>
+                <p>Специальность: {{ student.major }}</p>
+                <p>Курс: {{ student.course }}</p>
+            </div>
+            <a href="/students/{{ student.id }}">Смотреть всю информацию</a>
+        </div>
         {% endfor %}
+    </div>
 </body>
 </html>

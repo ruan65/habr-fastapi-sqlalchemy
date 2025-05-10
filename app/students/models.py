@@ -18,6 +18,7 @@ class Student(Base):
     course: Mapped[int]
     special_notes: Mapped[str_null_true]
     major_id: Mapped[int] = mapped_column(ForeignKey("majors.id"), nullable=False)
+    photo: Mapped[str] = mapped_column(Text, nullable=True)
 
     major: Mapped["Major"] = relationship("Major", back_populates="students")
 

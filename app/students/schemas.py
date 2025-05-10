@@ -45,6 +45,7 @@ class SStudent(BaseModel):
         ..., ge=2002, description="Год поступления должен быть не меньше 2002"
     )
     major: SMajor  # Изменено с str на SMajor
+    photo: Optional[str] = Field(None, max_length=100, description="Фото студента")
     course: int = Field(
         ..., ge=1, le=5, description="Курс должен быть в диапазоне от 1 до 5"
     )
