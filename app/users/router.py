@@ -31,7 +31,12 @@ async def auth_user(response: Response, user_data: SUserAuth):
         )
     access_token = create_access_token({"sub": str(check.id)})
     response.set_cookie(key="users_access_token", value=access_token, httponly=True)
-    return {"access_token": access_token, "refresh_token": None}
+    return {
+        "ok": True,
+        "access_token": access_token,
+        "refresh_token": None,
+        "message": "Авторизация успешна!",
+    }
 
 
 @router.get("/me/")
@@ -54,21 +59,15 @@ async def get_all_users(user_data: User = Depends(get_current_admin_user)):
 async def set_user_as_admin(
     user_id: int,
     set_admin: bool = True,
-    current_user: User = Depends(get_current_admin_user)
+    current_user: User = Depends(get_current_admin_user),
 ) -> dict:
     user = await UsersDAO.find_one_or_none_by_id(user_id)
     if not user:
         raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="User not found"
+            status_code=status.HTTP_404_NOT_FOUND, detail="User not found"
         )
-    
-    await UsersDAO.update(
-        filter_by={"id": user_id},
-        is_admin=set_admin
-    )
-    
+
+    await UsersDAO.update(filter_by={"id": user_id}, is_admin=set_admin)
+
     action = "set as admin" if set_admin else "removed from admin"
     return {"message": f"User with ID {user_id} has been successfully {action}"}
-
-

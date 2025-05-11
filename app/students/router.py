@@ -2,13 +2,16 @@ from fastapi import APIRouter, Depends, Request, UploadFile
 from app.students.dao import StudentDAO
 from app.students.schemas import SStudent, SStudentAdd
 from app.students.rb import RBStudent
+from fastapi.templating import Jinja2Templates
 import shutil
 
 
 router = APIRouter(
     prefix="/students",
-    tags=["Обработка студентов"],
+    tags=["Frontend"],
 )
+templates = Jinja2Templates(directory='app/templates')
+
 
 
 @router.get("/", summary="Список всех студентов", response_model=list[SStudent])
@@ -33,6 +36,7 @@ async def get_student_by_filter(request_body: RBStudent = Depends()) -> SStudent
 
 @router.get("/{id}", summary="Получить одного студента по id")
 async def get_student_by_id(student_id: int) -> SStudent | dict:
+    print(f'student_id = {student_id}')
     rez = await StudentDAO.find_full_data(student_id)
     if rez is None:
         return {"message": f"Студент с ID {student_id} не найден!"}
